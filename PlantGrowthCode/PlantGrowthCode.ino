@@ -83,8 +83,8 @@ void loop() {
       myMotor1->setSpeed(motorSpeed);  myMotor2->setSpeed(motorSpeed);  myMotor3->setSpeed(motorSpeed);  myMotor4->setSpeed(motorSpeed+20);
       myMotor1->run(FORWARD);
       myMotor2->run(FORWARD);
-      myMotor3->run(BACKWARD);
-      myMotor4->run(BACKWARD);
+      myMotor3->run(FORWARD);
+      myMotor4->run(FORWARD);
 
       //Turn Mushroom LEDs on related to light sensor values
       outputValue = map(sensorValue, lightThreshold, 1023, 0, 200);
@@ -147,8 +147,8 @@ void loop() {
     myMotor1->setSpeed(motorSpeed);  myMotor2->setSpeed(motorSpeed);  myMotor3->setSpeed(motorSpeed);  myMotor4->setSpeed(motorSpeed);
     myMotor1->run(BACKWARD);
     myMotor2->run(BACKWARD);
-    myMotor3->run(FORWARD);
-    myMotor4->run(FORWARD);
+    myMotor3->run(BACKWARD);
+    myMotor4->run(BACKWARD);
 
     if (buttonState != lastButtonState)    {
     if (buttonState == HIGH)      {
