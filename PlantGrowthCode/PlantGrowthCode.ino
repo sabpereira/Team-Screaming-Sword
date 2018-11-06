@@ -6,7 +6,10 @@
 */
 
 // SENSOR INITIALIZATION
-const int analogInPin = A0;     // Analog input pin that the potentiometer is attached to
+const int photocellPin = A0;     // Analog input pin that the photocell is attached to
+const int irPin = A1;
+
+
 const int button = 2;          //Digital pin for button
 const int mushroomLight1 = 9;   // Analog output pin that the LED is attached to for mushrooms
 const int mushroomLight2 = 10;
@@ -14,7 +17,13 @@ const int mushroomLight2 = 10;
 
 int sensorValue = 0;        // value read from the photocell
 int outputValue = 0;        // value output to the PWM (analog out) LEDs
-int lightThreshold = 375;
+
+int roomLight = 0;
+int lightThresholdOffset = 50;
+
+
+int distanceThreshold = 1000;
+
 int counter = 1;          //Used for mode changes, 1 is main mode
 
 int buttonState = 0;      //Initialize variables for the button's state and to detect changes
@@ -40,6 +49,9 @@ void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
 
+  //Calibrate to room lighting
+  roomLight = analogRead(photocellPin);
+
   // Initialize Motor Stuff
   AFMS.begin();
 
@@ -53,7 +65,8 @@ void setup() {
 void loop() {
 
   // read the photocell sensor value:
-  sensorValue = analogRead(analogInPin);
+  sensorValue = analogRead(photocellPin);
+  sensorValue1 = analogRead(irPin);
 
   //Updates buttonState to current state of button
   buttonState = digitalRead(button);
@@ -79,7 +92,13 @@ void loop() {
   if (counter == 1)
   {
 
-    if (sensorValue > lightThreshold) {
+    // Implement distance making moters going backwards
+    
+    if (sensorValue1 < distanceThreshold) {
+      motorSpeed = 25;
+    }   
+    
+    if (sensorValue > (roomLight + lightThresholdOffset)) {
       myMotor1->setSpeed(motorSpeed);  myMotor2->setSpeed(motorSpeed);  myMotor3->setSpeed(motorSpeed);  myMotor4->setSpeed(motorSpeed+20);
       myMotor1->run(FORWARD);
       myMotor2->run(FORWARD);
@@ -87,7 +106,7 @@ void loop() {
       myMotor4->run(FORWARD);
 
       //Turn Mushroom LEDs on related to light sensor values
-      outputValue = map(sensorValue, lightThreshold, 1023, 0, 200);
+      outputValue = map(sensorValue, (roomLight + lightThresholdOffset), 1023, 0, 200);
       analogWrite(mushroomLight1, outputValue);
       analogWrite(mushroomLight2, outputValue);
     }
@@ -105,6 +124,9 @@ void loop() {
       analogWrite(mushroomLight1, outputValue);
       analogWrite(mushroomLight2, outputValue);
     }
+
+    
+   
 
     if (buttonState != lastButtonState)
     {
