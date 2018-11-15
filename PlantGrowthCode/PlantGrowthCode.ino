@@ -15,7 +15,8 @@ const int mushroomLight1 = 9;   // Analog output pin that the LED is attached to
 const int mushroomLight2 = 10;
 
 
-int sensorValue = 0;        // value read from the photocell
+int photocellValue = 0;        // value read from the photocell
+int irValue = 0;              // value read from ir sensor
 int outputValue = 0;        // value output to the PWM (analog out) LEDs
 
 int roomLight = 0;
@@ -28,6 +29,10 @@ int counter = 1;          //Used for mode changes, 1 is main mode
 
 int buttonState = 0;      //Initialize variables for the button's state and to detect changes
 int lastButtonState = 0;
+
+
+
+bool mushroomsOn = false;
 
 
 // MOTOR INITIALIZATION
@@ -60,27 +65,37 @@ void setup() {
   myMotor3->setSpeed(00);
   myMotor4->setSpeed(00);
 
+  //Initialize pins as input/output
+   pinMode(button, INPUT);
+   pinMode(mushroomLight1, OUTPUT);
+   pinMode(mushroomLight2, OUTPUT);
+  
+
 }
 
 void loop() {
 
   // read the photocell sensor value:
-  sensorValue = analogRead(photocellPin);
-  sensorValue1 = analogRead(irPin);
+  photocellValue = analogRead(photocellPin);
+  irValue = analogRead(irPin);
 
   //Updates buttonState to current state of button
   buttonState = digitalRead(button);
 
-  Serial.print("sensor = ");
-  Serial.println(sensorValue);
-
+  Serial.print("Photocell sensor = ");
+  Serial.print(photocellValue);
+  Serial.print("\t Roomlight = ");
+  Serial.print(roomLight);
+  Serial.print("\t motors = ");
+  Serial.println(motorSpeed);
+  
   // wait 2 milliseconds before the next loop for the analog-to-digital
   // converter to settle after the last reading:
   delay(2);
 
   //  // print the results to the Serial Monitor:
   //  Serial.print("sensor = ");
-  //  Serial.print(sensorValue);
+  //  Serial.print(photocellValue);
   //  Serial.print("\n");
   //
   //  // wait 50 milliseconds before the next loop for the analog-to-digital
@@ -94,11 +109,8 @@ void loop() {
 
     // Implement distance making moters going backwards
     
-    if (sensorValue1 < distanceThreshold) {
-      motorSpeed = 25;
-    }   
-    
-    if (sensorValue > (roomLight + lightThresholdOffset)) {
+   if (photocellValue >= (roomLight + lightThresholdOffset)) {
+      motorSpeed = 100; //map(photocellValue, (roomLight + lightThresholdOffset), 500, 5, 25);
       myMotor1->setSpeed(motorSpeed);  myMotor2->setSpeed(motorSpeed);  myMotor3->setSpeed(motorSpeed);  myMotor4->setSpeed(motorSpeed+20);
       myMotor1->run(FORWARD);
       myMotor2->run(FORWARD);
@@ -106,7 +118,31 @@ void loop() {
       myMotor4->run(FORWARD);
 
       //Turn Mushroom LEDs on related to light sensor values
-      outputValue = map(sensorValue, (roomLight + lightThresholdOffset), 1023, 0, 200);
+      outputValue = map(photocellValue, (roomLight + lightThresholdOffset), 1023, 50, 200);
+      analogWrite(mushroomLight1, outputValue);
+      analogWrite(mushroomLight2, outputValue);
+      mushroomsOn = true;
+    }
+    if (photocellValue <= (roomLight - lightThresholdOffset)) {
+      motorSpeed = map(photocellValue, 0, (roomLight + lightThresholdOffset), 5, 25);
+      myMotor1->setSpeed(motorSpeed);  myMotor2->setSpeed(motorSpeed);  myMotor3->setSpeed(motorSpeed);  myMotor4->setSpeed(motorSpeed+20);
+      myMotor1->run(BACKWARD);
+      myMotor2->run(BACKWARD);
+      myMotor3->run(BACKWARD);
+      myMotor4->run(BACKWARD);
+//      myMotor1->run(FORWARD);
+//      myMotor2->run(FORWARD);
+//      myMotor3->run(FORWARD);
+//      myMotor4->run(FORWARD);
+
+      //Turn Mushroom LEDs on related to light sensor values
+      if (mushroomsOn == true) {
+        outputValue = map(photocellValue, (roomLight + lightThresholdOffset), 1023, 0, 200);
+      }
+      if (mushroomsOn == false) {
+        outputValue = 0;
+      }
+      
       analogWrite(mushroomLight1, outputValue);
       analogWrite(mushroomLight2, outputValue);
     }
@@ -120,7 +156,9 @@ void loop() {
       myMotor2->run(FORWARD);
       myMotor3->run(FORWARD);
       myMotor4->run(FORWARD);
-      outputValue = 0;
+      if (mushroomsOn == false) {
+        outputValue = 0;
+      }
       analogWrite(mushroomLight1, outputValue);
       analogWrite(mushroomLight2, outputValue);
     }
