@@ -75,54 +75,70 @@ void setup()
 
 void loop() 
 {
-  //
-  // Note 1: It is assumed that you are using a stepper motor with a 
-  // 1.8 degree step angle (which is 200 steps/revolution). This is the
-  // most common type of stepper.
-  //
-  // Note 2: It is also assumed that your stepper driver board is  
-  // configured for 1x microstepping.
-  //
-  // It is OK if these assumptions are not correct, your motor will just
-  // turn less than a full rotation when commanded to. 
-  //
-  // Note 3: This example uses "relative" motions.  This means that each
-  // command will move the number of steps given, starting from it's 
-  // current position.
-  //
+//  //
+//  // Note 1: It is assumed that you are using a stepper motor with a 
+//  // 1.8 degree step angle (which is 200 steps/revolution). This is the
+//  // most common type of stepper.
+//  //
+//  // Note 2: It is also assumed that your stepper driver board is  
+//  // configured for 1x microstepping.
+//  //
+//  // It is OK if these assumptions are not correct, your motor will just
+//  // turn less than a full rotation when commanded to. 
+//  //
+//  // Note 3: This example uses "relative" motions.  This means that each
+//  // command will move the number of steps given, starting from it's 
+//  // current position.
+//  //
+//
+//  //
+//  // set the speed and acceleration rates for the stepper motor
+//  //
+//
+//  
+//  stepper.setSpeedInStepsPerSecond(100);
+//  stepper.setAccelerationInStepsPerSecondPerSecond(100);
+//
+//  //
+//  // Rotate the motor in the forward direction one revolution (200 steps). 
+//  // This function call will not return until the motion is complete.
+//  //
+//  stepper.moveRelativeInSteps(200);
+//
+//  //
+//  // now that the rotation has finished, delay 1 second before starting 
+//  // the next move
+//  //
+//  delay(1000);
+//
+//  //
+//  // rotate backward 1 rotation, then wait 1 second
+//  //
+//  stepper.moveRelativeInSteps(-200*5);
+//  delay(1000);
+//
+//  //
+//  // This time speedup the motor, turning 10 revolutions.  Note if you
+//  // tell a stepper motor to go faster than it can, it just stops.
+//  //
+//  stepper.setSpeedInStepsPerSecond(200);
+//  stepper.setAccelerationInStepsPerSecondPerSecond(200);
+//  stepper.moveRelativeInSteps(200 * 5);
+//  delay(2000);
 
-  //
-  // set the speed and acceleration rates for the stepper motor
-  //
-  stepper.setSpeedInStepsPerSecond(100);
-  stepper.setAccelerationInStepsPerSecondPerSecond(100);
+
+  stepper.setSpeedInStepsPerSecond(50);
+  stepper.setAccelerationInStepsPerSecondPerSecond(75);
 
   //
   // Rotate the motor in the forward direction one revolution (200 steps). 
   // This function call will not return until the motion is complete.
   //
-  stepper.moveRelativeInSteps(200);
+  stepper.moveRelativeInSteps(200*10);
 
-  //
-  // now that the rotation has finished, delay 1 second before starting 
-  // the next move
-  //
-  delay(1000);
 
-  //
-  // rotate backward 1 rotation, then wait 1 second
-  //
-  stepper.moveRelativeInSteps(-200*5);
-  delay(1000);
 
-  //
-  // This time speedup the motor, turning 10 revolutions.  Note if you
-  // tell a stepper motor to go faster than it can, it just stops.
-  //
-  stepper.setSpeedInStepsPerSecond(200);
-  stepper.setAccelerationInStepsPerSecondPerSecond(200);
-  stepper.moveRelativeInSteps(200 * 5);
-  delay(2000);
+  
 }
 
 
