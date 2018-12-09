@@ -1,8 +1,15 @@
 //int photocellValues[6];// = {0, 0, 0, 0, 0, 0};        // values read from the photocells
-int roomLight = 0;
+int roomLight_ul = 0;
+int roomLight_ur = 0;
+int roomLight_l = 0; 
+int roomLight_ll = 0;
+int roomLight_lo = 0;
+int roomLight_lr = 0;
 int lightThresholdOffset = 50;
 int lightCounter = 0;
 unsigned long flashCounter = 0;
+int lightReading = 0;
+int outputValue = 0;
 
 const int ul = A0; // Upper left photocell
 //Upper platform only has 3 mushrooms and 3 static plants, doesn't need a photocell
@@ -12,8 +19,17 @@ const int ll = A3; // Lower left photocell
 const int lo = A4; // Lower photocell
 const int lr = A5; // Lower right photocell
 
-const int fc1 = 12; //fairy circle digital pin - does not need to be a PWM pin
-const int fc2 = 11; //second fairy circle digital pin - does not need to be a PWM pin
+//int photocells[] = {ul, ur, l, ll, lo, lr};
+//right now there's only one "photocell"/potentiometer
+int photocells[] = {ul, ul, ul, ul, ul, ul};
+
+
+const int fc1 = 13; //fairy circle digital pin - does not need to be a PWM pin
+const int fc2 = 12; //second fairy circle digital pin - does not need to be a PWM pin
+const int dimLED = 11; //dimming LED - needs to be a PWM pin
+
+int roomLights[] = {roomLight_ul, roomLight_ur, roomLight_l, roomLight_ll, roomLight_lo, roomLight_lr};
+int dimLEDS[] = {11, 10, 9, 6, 5, 3}; //all the PWM pins
 
 unsigned long previousMillis = 0;
 unsigned long currentMillis = millis();
@@ -28,7 +44,12 @@ void setup() {
   
   //Calibrate to room lighting
   // roomLight = (analogRead(ul)+analogRead(ur)+analogRead(l)+analogRead(ll)+analogRead(lo)+analogRead(lr))/6;
-  roomLight = analogRead(ul);
+  roomLight_ul = analogRead(ul);
+  roomLight_ur = analogRead(ur);
+  roomLight_l = analogRead(l);
+  roomLight_ll = analogRead(ll);
+  roomLight_lo = analogRead(lo);
+  roomLight_lr = analogRead(lr);
 }
 
 void loop() {
@@ -41,7 +62,7 @@ void loop() {
   currentMillis = millis();
 
   // if the fairy circle photocell is below a certain interval, start the flashing routine
-  if (analogRead(ul) <= (roomLight - lightThresholdOffset/2)) {
+  if (analogRead(ul) <= (roomLight_ul - lightThresholdOffset/2)) {
     if ((currentMillis - previousMillis) > interval) {
     
       //save the last time you blinked the LED
@@ -64,5 +85,13 @@ void loop() {
     digitalWrite(fc1, LOW);
     digitalWrite(fc2, LOW);
   }
+  // There are 6 PWM pins and there are 6 photocells. This code connects the light reading to how dim we want
+  // the mushroom to be. 
+  for (int i = 0; i<6; i++){
+    lightReading = analogRead(photocells[i]);
+    outputValue = map(lightReading, 0, 1023, 0, 255);
+    analogWrite(dimLEDS[i], outputValue);
+  }
+  
   
 }
