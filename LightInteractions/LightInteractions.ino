@@ -6,7 +6,6 @@ int roomLight_ll = 0;
 int roomLight_lo = 0;
 int roomLight_lr = 0;
 int lightThresholdOffset = 50;
-int lightCounter = 0;
 unsigned long flashCounter = 0;
 int lightReading = 0;
 int outputValue = 0;
@@ -20,6 +19,7 @@ const int lo = A4; // Lower photocell
 const int lr = A5; // Lower right photocell
 
 //int photocells[] = {ul, ur, l, ll, lo, lr};
+
 //right now there's only one "photocell"/potentiometer
 int photocells[] = {ul, ul, ul, ul, ul, ul};
 
@@ -86,11 +86,13 @@ void loop() {
     digitalWrite(fc2, LOW);
   }
   // There are 6 PWM pins and there are 6 photocells. This code connects the light reading to how dim we want
-  // the mushroom to be. 
+  // the mushroom to be. Important that LEDs are connected in the same order as the photocells are arranged 
+  // in this list: ul, ur, l, ll, lo, lr
   for (int i = 0; i<6; i++){
     lightReading = analogRead(photocells[i]);
     outputValue = map(lightReading, 0, 1023, 0, 255);
     analogWrite(dimLEDS[i], outputValue);
+    delay(2);
   }
   
   
