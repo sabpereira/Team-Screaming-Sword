@@ -118,8 +118,8 @@ if (photocellValue < (roomLight + lightThresholdOffset)) {
   lightCounter = 0;
 
   if (photocellValue <= (roomLight - lightThresholdOffset)) {
-    stepperX.setTargetPositionInSteps(-stepIncrementsDown);
-    stepperY.setTargetPositionInSteps(-stepIncrementsDown);
+    stepperX.setTargetPositionInSteps(0);
+    stepperY.setTargetPositionInSteps(0);
     while (!stepperX.motionComplete()) {
       stepperX.processMovement();
       stepperY.processMovement();
