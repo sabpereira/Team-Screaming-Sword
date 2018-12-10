@@ -45,8 +45,8 @@
 // pin assignments
 //
 const int LED_PIN = 13;
-const int MOTOR_STEP_PIN = 7;
-const int MOTOR_DIRECTION_PIN = 6;
+const int MOTOR_STEP_PIN = 6;
+const int MOTOR_DIRECTION_PIN = 7;
 
 
 //
@@ -127,14 +127,14 @@ void loop()
 //  delay(2000);
 
 
-  stepper.setSpeedInStepsPerSecond(50);
-  stepper.setAccelerationInStepsPerSecondPerSecond(75);
+  stepper.setSpeedInStepsPerSecond(75);
+  stepper.setAccelerationInStepsPerSecondPerSecond(50);
 
   //
   // Rotate the motor in the forward direction one revolution (200 steps). 
   // This function call will not return until the motion is complete.
   //
-  stepper.moveRelativeInSteps(200*10);
+  stepper.moveRelativeInSteps(-200*10);
 
 
 
